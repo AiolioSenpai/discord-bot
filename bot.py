@@ -44,8 +44,8 @@ async def on_message(message):
     if message.channel.id != LISTEN_CHANNEL_ID:
         return
 
-    # Check if @Upcoming Events is mentioned
-    if any(role.name == "Upcoming Events" for role in message.role_mentions):
+    # Check if "@Upcoming Events" text is in the message
+    if "@Upcoming Events" in message.content:
         repost_content = message.content
 
         try:

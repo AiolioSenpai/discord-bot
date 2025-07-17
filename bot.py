@@ -24,6 +24,9 @@ async def on_ready():
 async def on_message(message):
     global enabled
 
+    if message.author.bot:
+        return
+
     # Enable/disable commands
     if message.content.lower() == "!enablebot":
         enabled = True

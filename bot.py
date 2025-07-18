@@ -7,6 +7,7 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 LISTEN_CHANNEL_ID = int(os.getenv("LISTEN_CHANNEL_ID"))
+OWNER_ID = int(os.getenv("OWNER_ID"))  # Add your Discord user ID here or in .env
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,6 +29,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    # === Enable/Disable commands ===
     if message.content.lower() == "!enablebot":
         enabled = True
         await message.channel.send("✅ Event cleaner bot enabled.")
@@ -41,13 +43,43 @@ async def on_message(message):
     if not enabled:
         return
 
+    # === DM Handling ===
+    # Forward all user DMs (except owner's) to the owner
+    if message.guild is None:
+        if message.author.id != OWNER_ID:
+            owner = await client.fetch_user(OWNER_ID)
+            await owner.send(f"📨 New DM from **{message.author}** (ID: {message.author.id}):\n{message.content}")
+            return
+
+        # Owner sent a DM to the bot - parse reply command
+        if message.author.id == OWNER_ID:
+            if message.content.startswith("reply"):
+                parts = message.content.split(" ", 2)
+                if len(parts) < 3:
+                    await message.channel.send("Usage: reply <USER_ID> <message>")
+                    return
+                try:
+                    user_id = int(parts[1])
+                except ValueError:
+                    await message.channel.send("Invalid USER_ID. It must be an integer.")
+                    return
+                user_message = parts[2]
+                try:
+                    user = await client.fetch_user(user_id)
+                    await user.send(user_message)
+                    await message.channel.send(f"✅ Message sent to {user} (ID: {user_id})")
+                except Exception as e:
+                    await message.channel.send(f"❌ Failed to send message: {e}")
+            return
+
+    # === Regular channel message handling ===
     if message.channel.id != LISTEN_CHANNEL_ID:
         return
 
     if "@Upcoming Events" not in message.content:
         return
 
-    # Delete immediately while retaining content in memory
+    # Delete the original message
     try:
         await message.delete()
     except discord.Forbidden:
@@ -55,21 +87,20 @@ async def on_message(message):
     except discord.HTTPException as e:
         print(f"Failed to delete message: {e}")
 
-    # Parse only EU ranges
-    # Matches: ```events``` then "For <server ranges>"
+    # Parse EU ranges in the message
     pattern = r"(?:``([^`]*)``\s*For ([^\n]*)EU[^\n]*)"
     matches = re.findall(pattern, message.content, flags=re.MULTILINE)
 
     found_block = None
 
     for events, servers in matches:
-        # Extract ranges like S1-1140, S1141-1160, etc.
+        # Check for ranges like S1-1140, S1141-1160, etc.
         server_ranges = re.findall(r"S(\d+)-(\d+)", servers)
         for start, end in server_ranges:
             if int(start) <= TARGET_SERVER <= int(end):
                 found_block = f"New events:\n``{events.strip()}``\nFor S{TARGET_SERVER}EU"
                 break
-        # Handle exact server mentions without ranges, like S1099EU
+        # Check for exact servers like S1099EU
         exact_servers = re.findall(r"S(\d+)(?!-)\b", servers)
         for server in exact_servers:
             if int(server) == TARGET_SERVER:

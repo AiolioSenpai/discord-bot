@@ -2,6 +2,11 @@ import discord
 import os
 import re
 from dotenv import load_dotenv
+import asyncio
+import random
+from datetime import datetime
+
+TIMEZONE_OFFSET = 2  # adjust if needed for your Hogwarts time
 
 load_dotenv()
 
@@ -32,12 +37,12 @@ async def on_message(message):
     # === Enable/Disable commands ===
     if message.content.lower() == "!enablebot":
         enabled = True
-        await message.channel.send("✅ Event cleaner bot enabled.")
+        await message.channel.send("✅ Back to work.")
         return
 
     if message.content.lower() == "!disablebot":
         enabled = False
-        await message.channel.send("⛔ Event cleaner bot disabled.")
+        await message.channel.send("⛔ Alright, I'll be taking a nap.")
         return
 
     if not enabled:
@@ -120,5 +125,33 @@ async def on_message(message):
         await message.channel.send(repost_message)
     else:
         print("No relevant EU event block found for the target server.")
+
+async def status_loop():
+    day_statuses = [
+        "🐉 Feeding Norbert",
+        "🌳 Walking in the Forbidden Forest",
+        "🪓 Chopping firewood near the hut",
+        "🦄 Checking on the unicorns"
+    ]
+
+    night_statuses = [
+        "🌙 Watching the stars with Fang",
+        "💤 Sleeping in the hut",
+        "🕯️ Brewing tea by the fireplace"
+    ]
+
+    while True:
+        hour_utc = datetime.utcnow().hour
+        local_hour = (hour_utc + TIMEZONE_OFFSET) % 24
+
+        if 6 <= local_hour < 22:
+            status_message = random.choice(day_statuses)
+        else:
+            status_message = random.choice(night_statuses)
+
+        activity = discord.Game(status_message)
+        await client.change_presence(activity=activity)
+
+        await asyncio.sleep(1800)  # update every 30 min
 
 client.run(TOKEN)

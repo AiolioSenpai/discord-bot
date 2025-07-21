@@ -65,7 +65,7 @@ async def ask_owner_for_image_approval(image_url):
         return m.author.id == OWNER_ID and isinstance(m.channel, discord.DMChannel)
 
     try:
-        msg = await client.wait_for('message', check=check, timeout=60.0)
+        msg = await client.wait_for('message', check=check, timeout=160.0)
         return msg.content.strip().lower()
     except asyncio.TimeoutError:
         await owner.send("⏰ Yeh took too long ter reply, so I'm skippin' the creature today.")

@@ -26,6 +26,7 @@ TARGET_SERVER = 1099  # Change as needed
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user}")
+    client.loop.create_task(status_loop())
 
 @client.event
 async def on_message(message):
@@ -152,6 +153,6 @@ async def status_loop():
         activity = discord.Game(status_message)
         await client.change_presence(activity=activity)
 
-        await asyncio.sleep(1800)  # update every 30 min
+        await asyncio.sleep(7200)  # update every 2 hours
 
 client.run(TOKEN)

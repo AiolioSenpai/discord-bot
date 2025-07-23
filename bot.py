@@ -28,28 +28,35 @@ TARGET_SERVER = 1099  # Your server number
 
 async def get_random_cute_animal_image_url():
     apis = [
-        "https://some-random-api.ml/img/dog",
-        "https://some-random-api.ml/img/cat",
-        "https://some-random-api.ml/img/fox",
-        "https://random.dog/woof.json",
-        "https://aws.random.cat/meow",
-        "https://randomfox.ca/floof/",
+        ("https://random.dog/woof.json", ["url"]),
+        ("https://aws.random.cat/meow", ["file"]),
+        ("https://randomfox.ca/floof/", ["image"]),
+        ("https://shibe.online/api/shibes?count=1", [0]),
+        ("https://shibe.online/api/cats?count=1", [0]),
+        ("https://shibe.online/api/birds?count=1", [0]),
+        ("https://api.thecatapi.com/v1/images/search", [0, "url"]),
+        ("https://api.thedogapi.com/v1/images/search", [0, "url"]),
     ]
+
     random.shuffle(apis)
 
     async with aiohttp.ClientSession() as session:
-        for api_url in apis:
+        for api_url, keys in apis:
             try:
                 async with session.get(api_url, timeout=10) as resp:
                     if resp.status != 200:
                         continue
                     data = await resp.json()
-                    for key in ["link", "image", "file", "url"]:
-                        if key in data:
-                            # Filter out non-image URLs (for random.dog)
-                            if not data[key].lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
-                                continue
-                            return data[key]
+                    value = data
+                    for key in keys:
+                        if isinstance(key, int):
+                            value = value[key]
+                        else:
+                            value = value.get(key)
+                        if value is None:
+                            break
+                    if isinstance(value, str) and value.lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
+                        return value
             except Exception as e:
                 print(f"Error fetching from {api_url}: {e}")
                 continue

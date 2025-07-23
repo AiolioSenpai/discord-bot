@@ -128,7 +128,7 @@ async def on_message(message):
 
     if message.author == client.user:
         return
-
+    
     if message.content.lower() == "!enablebot":
         enabled = True
         await message.channel.send("✅ Back to work.")
@@ -164,6 +164,48 @@ async def on_message(message):
                 await message.channel.send(f"❌ Failed to send message: {e}")
             return
 
+     # ============ NEW !fetch implementation ==============
+    if message.guild is None and message.author.id == OWNER_ID:
+        if message.content.lower() == "!fetch":
+            channel = client.get_channel(LISTEN_CHANNEL_ID)
+
+            async def fetch_loop():
+                while True:
+                    image_url = await get_random_cute_animal_image_url()
+                    if not image_url:
+                        await message.author.send("Couldn't fetch a creature at the moment 🐾")
+                        return
+
+                    decision = await ask_owner_for_image_approval(image_url)
+                    if decision == "yes":
+                        hagrid_flavors = [
+                            "Here's a lil' friend fer yeh, straight from the forest 🪵🦔",
+                            "Found this one wanderin' near the pumpkins 🐾🎃",
+                            "Look at this wee beastie, ain't it grand? 🐉",
+                            "Another magical creature ter brighten yer day ✨",
+                            "Keep this one quiet, Ministry doesn't know I have it 🦄🤫",
+                            "Thought yeh might like this one, soft as a puffskein 🪶"
+                        ]
+                        embed = discord.Embed(
+                            title=random.choice(hagrid_flavors),
+                            color=discord.Color.gold()
+                        )
+                        embed.set_image(url=image_url)
+                        await channel.send(embed=embed)
+                        return
+                    elif decision == "no":
+                        continue
+                    elif decision == "stop":
+                        await message.author.send("Alright, no creature today 🐾")
+                        return
+                    else:
+                        await message.author.send("Please reply with `yes`, `no`, or `stop`.")
+                        continue
+
+            await fetch_loop()
+            return
+    # ============ End of NEW !fetch ==============
+    
     # === Event repost logic ===
     if message.channel.id != LISTEN_CHANNEL_ID:
         return

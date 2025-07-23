@@ -35,21 +35,25 @@ async def get_random_cute_animal_image_url():
         "https://aws.random.cat/meow",
         "https://randomfox.ca/floof/",
     ]
-    api_url = random.choice(apis)
+    random.shuffle(apis)
 
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url, timeout=10) as resp:
-                if resp.status != 200:
-                    return None
-                data = await resp.json()
-                # Normalize keys
-                for key in ["link", "image", "file", "url"]:
-                    if key in data:
-                        return data[key]
-    except Exception as e:
-        print(f"Error fetching animal image: {e}")
-        return None
+    async with aiohttp.ClientSession() as session:
+        for api_url in apis:
+            try:
+                async with session.get(api_url, timeout=10) as resp:
+                    if resp.status != 200:
+                        continue
+                    data = await resp.json()
+                    for key in ["link", "image", "file", "url"]:
+                        if key in data:
+                            # Filter out non-image URLs (for random.dog)
+                            if not data[key].lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
+                                continue
+                            return data[key]
+            except Exception as e:
+                print(f"Error fetching from {api_url}: {e}")
+                continue
+    return None
 
 async def ask_owner_for_image_approval(image_url):
     owner = await client.fetch_user(OWNER_ID)

@@ -40,7 +40,7 @@ async def get_random_cute_animal_image_url():
         ("https://cataas.com/cat?json=true", ["url"]),
         ("https://api.bunnies.io/v2/loop/random/?media=gif,png", ["media", "poster"]),
         ("https://some-random-api.ml/animal/panda", ["image"]),
-        ("https://some-random-api.ml/animal/bird", ["image"])
+        ("https://some-random-api.ml/animal/bird", ["image"]),
         ("https://some-random-api.ml/animal/koala", ["image"]),
     ]
 
@@ -61,7 +61,7 @@ async def get_random_cute_animal_image_url():
                             value = value.get(key)
                         if value is None:
                             break
-                    if isinstance(value, str) and value.lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
+                    if isinstance(value, str) and value.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
                         return value
             except Exception as e:
                 print(f"Error fetching from {api_url}: {e}")

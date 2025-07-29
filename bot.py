@@ -42,6 +42,7 @@ async def get_random_cute_animal_image_url():
         ("https://some-random-api.ml/animal/panda", ["image"]),
         ("https://some-random-api.ml/animal/bird", ["image"]),
         ("https://some-random-api.ml/animal/koala", ["image"]),
+        ("https://www.fishwatch.gov/api/species", ["Species Illustration Photo", "src"]),
     ]
 
     random.shuffle(apis)

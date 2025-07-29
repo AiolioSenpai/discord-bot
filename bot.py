@@ -36,6 +36,12 @@ async def get_random_cute_animal_image_url():
         ("https://shibe.online/api/birds?count=1", [0]),
         ("https://api.thecatapi.com/v1/images/search", [0, "url"]),
         ("https://api.thedogapi.com/v1/images/search", [0, "url"]),
+        ("https://placebear.com/400/300", []),
+        ("https://cataas.com/cat?json=true", ["url"]),
+        ("https://api.bunnies.io/v2/loop/random/?media=gif,png", ["media", "poster"]),
+        ("https://some-random-api.ml/animal/panda", ["image"]),
+        ("https://some-random-api.ml/animal/bird", ["image"])
+        ("https://some-random-api.ml/animal/koala", ["image"]),
     ]
 
     random.shuffle(apis)

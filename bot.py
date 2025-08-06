@@ -28,21 +28,20 @@ TARGET_SERVER = 1099  # Your server number
 
 async def get_random_cute_animal_image_url():
     apis = [
-        ("https://random.dog/woof.json", ["url"]),
-        ("https://aws.random.cat/meow", ["file"]),
-        ("https://randomfox.ca/floof/", ["image"]),
-        ("https://shibe.online/api/shibes?count=1", [0]),
-        ("https://shibe.online/api/cats?count=1", [0]),
-        ("https://shibe.online/api/birds?count=1", [0]),
-        ("https://api.thecatapi.com/v1/images/search", [0, "url"]),
-        ("https://api.thedogapi.com/v1/images/search", [0, "url"]),
-        ("https://placebear.com/400/300", []),
-        ("https://cataas.com/cat?json=true", ["url"]),
-        ("https://api.bunnies.io/v2/loop/random/?media=gif,png", ["media", "poster"]),
-        ("https://some-random-api.ml/animal/panda", ["image"]),
-        ("https://some-random-api.ml/animal/bird", ["image"]),
-        ("https://some-random-api.ml/animal/koala", ["image"]),
-        ("https://www.fishwatch.gov/api/species", ["Species Illustration Photo", "src"]),
+        ("https://random.dog/woof.json", ["url"]),  # Random dog image
+        ("https://api.thecatapi.com/v1/images/search?limit=1", [0, "url"]),  # Random cat image
+        ("https://randomfox.ca/floof/", ["image"]),  # Random fox image
+        ("https://shibe.online/api/shibes?count=1", [0]),  # Random Shiba Inu image
+        ("https://shibe.online/api/cats?count=1", [0]),  # Random cat image
+        ("https://api.thecatapi.com/v1/images/search", [0, "url"]),  # Random cat image
+        ("https://api.thedogapi.com/v1/images/search", [0, "url"]),  # Random dog image
+        ("https://some-random-api.com/animal/bear", ["image"]),  # Random bear image
+        ("https://cataas.com/cat?json=true", ["url"]),  # Random cat image
+        ("https://some-random-api.com/animal/rabbit", ["image"]),  # Random rabbit image
+        ("https://some-random-api.com/animal/panda", ["image"]),  # Random panda image
+        ("https://some-random-api.com/animal/bird", ["image"]),  # Random bird image
+        ("https://some-random-api.com/animal/koala", ["image"]),  # Random koala image
+        ("https://www.fishwatch.gov/api/species/random", ["Species Illustration Photo", "src"]),  # Random fish image
     ]
 
     random.shuffle(apis)

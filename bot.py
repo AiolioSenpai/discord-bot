@@ -226,7 +226,7 @@ async def on_message(message):
     except discord.HTTPException as e:
         print(f"Failed to delete message: {e}")
 
-    pattern = r"(?:``([^`]*)``\s*For ([^\n]*)EU[^\n]*)"
+    pattern = r"New events:\s*([\s\S]*?)\s*For ([^\n]*)EU[^\n]*"
     matches = re.findall(pattern, message.content, flags=re.MULTILINE)
 
     found_block = None

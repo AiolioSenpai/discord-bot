@@ -235,12 +235,12 @@ async def on_message(message):
         server_ranges = re.findall(r"S(\d+)-(\d+)", servers)
         for start, end in server_ranges:
             if int(start) <= TARGET_SERVER <= int(end):
-                found_block = f"New events:\n``{events.strip()}``\nFor S{TARGET_SERVER}EU"
+                found_block = f"New events:\n{events.strip()}\nFor S{TARGET_SERVER}EU"
                 break
         exact_servers = re.findall(r"S(\d+)(?!-)\b", servers)
         for server in exact_servers:
             if int(server) == TARGET_SERVER:
-                found_block = f"New events:\n``{events.strip()}``\nFor S{TARGET_SERVER}EU"
+                found_block = f"New events:\n{events.strip()}\nFor S{TARGET_SERVER}EU"
                 break
         if found_block:
             break
